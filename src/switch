@@ -1,0 +1,70 @@
+  switch(interactClass) {
+    //connection
+    case 1:
+      interact.midx = mouseX;
+      interact.midy = mouseY;
+
+      for(const station of game.stations){
+        onStation = station.onMouse();
+        if(onStation != null) {
+          if(onStation == pOnStation) break;
+
+          let line = interact.line;
+
+          //deleteStation
+          if(
+            (interact.station1 == onStation && validOverlap(interact.station2, line.stations[line.stations.indexOf(onStation)-1])) ||
+            (interact.station2 == onStation && validOverlap(interact.station1, line.stations[line.stations.indexOf(onStation)+1]))
+          ) {
+            console.log(line)
+            interact = deleteStation(line, onStation);
+          }
+          //addStation
+          else if(
+            line.validStation(onStation) && 
+            (validOverlap(interact.station1, onStation) && validOverlap(interact.station2, onStation))
+          ) {
+            interact = addStation(line, onStation, line.connections.indexOf(interact)+1);
+          }
+          updateOverlap();
+          break;
+        }
+      }
+      pOnStation = onStation;
+      
+      break;
+
+    //terminal
+    case 2:
+      interact.x = mouseX;
+      interact.y = mouseY;
+
+      for(const station of game.stations) {
+        onStation = station.onMouse();
+        if(onStation != null) {
+          if(onStation == pOnStation) break;
+
+          let line = interact.line;
+
+          //deleteStation
+          if(interact.station == onStation && line.stations.length != 1) {
+            interact = deleteTerminal(line, onStation);
+            break;
+          }
+          //addStation
+          else if(line.validStation(onStation) && validOverlap(interact.station, onStation)) {
+            interact = addTerminal(line, onStation, interact.isStart)
+          }
+          updateOverlap();
+          break;
+        }
+      }
+      pOnStation = onStation;
+      break;
+    
+
+    //train
+    case 3:
+      interact.x = mouseX;
+      interact.y = mouseY;
+  }
