@@ -1,5 +1,8 @@
 export const STATION_GENERATION_RATE =  1000000
-export const PASSENGER_GENERATION_RATE = 50000
+export const PASSENGER_GENERATION_RATE = 100000
+export const ONE_DAY = 1000
+export const MAX_WAITING_TIME = 1000
+export const PASSENGER_MOVING_TIME = 300
 export const WEIGHT = [0.6, 0.3, 0.1]
 
 export const LINE_COLOR = [
@@ -18,25 +21,9 @@ export let PASSENGER_SIZE = STATION_SIZE/3
 export let LINE_SIZE = STATION_SIZE/3
 export let TRAIN_SIZE = LINE_SIZE * 2.5
 export let TRAIN_PASSENGER_SIZE = TRAIN_SIZE / 2.5
-export let BUTTON_SIZE = STATION_SIZE * 1.5
+export let BUTTON_SIZE = STATION_SIZE * 2
+export let CLOCK_SIZE = STATION_SIZE * 3
 
 export const CLOCK_SPEED = 1;
 export let TRAIN_SPEED = 1.5 * CLOCK_SPEED;
 
-export function drawShape(x, y, type, size) {
-    switch(type) {
-        case 0:
-            circle(x, y, size);
-            break;
-        case 1:
-            triangle(
-                x, y - size * (Math.sqrt(3)/3), 
-                x - size/2, y + size * (Math.sqrt(3)/6),
-                x + size/2, y + size * (Math.sqrt(3)/6)
-            )
-            break;
-        case 2:
-            square(x, y, size);
-            break;
-    }
-}

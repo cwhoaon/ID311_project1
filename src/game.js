@@ -1,18 +1,20 @@
 import '../css/style.css';
 import { sketch } from 'p5js-wrapper';
 
-import { PASSENGER_GENERATION_RATE, STATION_GENERATION_RATE } from './Constant';
+import { PASSENGER_GENERATION_RATE, STATION_GENERATION_RATE, LINE_COLOR, STATION_SIZE } from './Constant';
 
-import { prob } from './Probability.js';
+import { prob } from './Static.js';
 
 import { StationFactory } from './Station.js'
-import { Clock } from './Clock.js'
+import { Clock } from './Clock.js';
+import { Score } from './Score';
 import { Line, Connection, Terminal, allConnections, allTerminals } from './Line';
 import { Train } from './Train';
 import { Button } from './Button';
 
 const game = {
   clock: new Clock(),
+  score: new Score(),
   stationFactory: StationFactory.getInstance(),
   num_line: 8,
   num_train: 8,
@@ -30,13 +32,14 @@ function initialize() {
   game.stations.push(game.stationFactory.makeStation(0));
   game.stations.push(game.stationFactory.makeStation(1));
   game.stations.push(game.stationFactory.makeStation(2));
-  game.trainButton = new Button(game.num_train, windowWidth/20, windowHeight/2)
+  game.trainButton = new Button(windowWidth * 0.04, windowHeight * 0.4, "src/train.png", game.num_train)
 }
 
 sketch.setup = function(){
   createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   ellipseMode(CENTER);
+  imageMode(CENTER);
   angleMode(DEGREES);
   //initializing game
   initialize();
@@ -46,9 +49,11 @@ sketch.setup = function(){
 
 sketch.draw = function(){
   clear()
-  background(200);
+  background(240, 255, 240);
+  game.clock.draw()
+  // game.score.draw();
   game.trainButton.draw();
-
+  drawLineStatus()
   //draw line
   for(const line of game.lines) {
     line.draw();
@@ -69,13 +74,14 @@ sketch.draw = function(){
       station.generationTime = game.clock.time
     }
     //draw station
+    station.updateWaitingTime()
     station.draw()
   }
 
   for (const train of game.trains) {
-    if(!train.isInteracting){
-      train.arrive(game.clock.time);
-      train.move();
+    if(!train.isInteracting) {
+      train.arrive(game.clock.time)
+      train.move(game.clock.time);
     }
     train.draw();
   }
@@ -85,8 +91,20 @@ sketch.draw = function(){
 }
 
 
+function drawLineStatus() {
+  let gap = STATION_SIZE;
+  let x =   windowWidth -  windowWidth *0.03
+  let y = (windowHeight / 2) - ((game.num_line+1)/2)*(gap + STATION_SIZE)
+  noStroke();
 
-
+  for(const line of game.lines) {
+    y += STATION_SIZE + gap;
+    let color = LINE_COLOR[line.id];
+    fill(color.r, color.g, color.b);
+    if(line.active) circle(x, y, STATION_SIZE*1.5)
+    else circle(x, y, STATION_SIZE);
+  }
+}
 
 
 
@@ -131,6 +149,7 @@ function onTrainButton() {
   if(game.trainButton.onMouse() != null) {
     let train = new Train(mouseX, mouseY);
     game.trains.push(train);
+    game.trainButton.setNum(game.num_train - game.trains.length);
     return train;
   };
   return null;
@@ -307,9 +326,14 @@ sketch.mouseReleased = function() {
     case 3:
       let onObject = onLine();
       if(getClass(onObject) == 1) {
+        interact.subscribe(game.score);
         interact.activate(onObject, game.clock.time)
       }
-      else game.trains.splice(game.trains.indexOf(interact), 1);
+      else {
+        interact.unsubscribeAll();
+        game.trains.splice(game.trains.indexOf(interact), 1);
+        game.trainButton.setNum(game.num_train - game.trains.length);
+      }
       break;
   }
 

@@ -1,6 +1,6 @@
-import { PASSENGER_SIZE, STATION_SIZE, drawShape } from "./Constant.js";
+import { MAX_WAITING_TIME, PASSENGER_SIZE, STATION_SIZE } from "./Constant.js";
 
-import { randomType } from "./Probability.js";
+import { randomType, drawShape } from "./Static.js";
 
 class Station {
     constructor(id, x, y, type) {
@@ -10,6 +10,7 @@ class Station {
         this.type = type;
         this.passengers = [];
         this.maxPassenger = 6;
+        this.waitingTime = 0;
         this.generationTime = 0;
     }
 
@@ -31,11 +32,20 @@ class Station {
     }
 
     setPassengers(passengers) {
-        this.passengers = passengers
+        this.passengers = passengers;
+    }
+
+    updateWaitingTime() {
+        if(this.passengers.length > this.maxPassenger) this.waitingTime++;
+        else this.waitingTime = this.waitingTime > 0 ? this.waitingTime-1 : 0;
     }
 
 
     draw() {
+        fill(255, 100, 100)
+        noStroke()
+        arc(this.x, this.y, STATION_SIZE*2.5, STATION_SIZE*2.5, -90, (this.waitingTime/MAX_WAITING_TIME)*360-90)
+
         //draw station
         stroke(0)
         strokeWeight(STATION_SIZE/5);
@@ -57,7 +67,8 @@ class Station {
             drawShape(passengerX, passengerY, this.passengers[i], PASSENGER_SIZE);
             passengerX += 1.25 * PASSENGER_SIZE;
         }
-        text(this.id, this.x, this.y)
+
+
     }
 
     onMouse() {
@@ -101,7 +112,7 @@ class StationFactory {
                     break;
                 }
             }
-            console.log('pending')
+            console.log('pending station')
         } while (isOverlap)
 
         this.previousStation.push({px: x, py: y});

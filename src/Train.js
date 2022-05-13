@@ -1,4 +1,5 @@
-import { TRAIN_SIZE, TRAIN_SPEED, LINE_COLOR, TRAIN_PASSENGER_SIZE, drawShape } from './Constant.js'
+import { TRAIN_SIZE, TRAIN_SPEED, LINE_COLOR, TRAIN_PASSENGER_SIZE, PASSENGER_MOVING_TIME } from './Constant.js'
+import { drawShape } from './Static.js';
 import { pent } from './shape.js';
 import { Subject } from './Subject.js';
 
@@ -17,7 +18,7 @@ class Train extends Subject {
     constructor(x, y) { 
         super()
         this.isInteracting = true;
-        this.passengers
+        this.passengers = []
         this.maxPassenger = 6;
         this.line
         this.connection
@@ -27,7 +28,8 @@ class Train extends Subject {
         this.y = y
         this.direction = 0;
         this.partingTime;
-        this.arrivalTime
+        this.arrivalTime;
+        this.waiting = false;
     }
 
     deactivate() {
@@ -35,10 +37,8 @@ class Train extends Subject {
     }
 
     activate(connection, time) {
-        console.log(connection)
         this.isInteracting = false;
 
-        this.passengers = [];
         this.connection = connection;
         this.line = this.connection.line;
         this.location = 0;
@@ -128,7 +128,7 @@ class Train extends Subject {
         }
         let count = 0;
         for(let i of passengerIndexes){
-            this.passengers.push(stationPassengers[i -count]);
+            this.passengers.push(stationPassengers[i-count]);
             stationPassengers.splice(i - count, 1);
             this.passengers.sort((a, b) => b - a);
             count++;
@@ -145,6 +145,7 @@ class Train extends Subject {
 
         tempPassenger = this.passengers.filter((p) => p != stationType);
         count = this.passengers.length - tempPassenger.length;
+        this.notifySubscribers("train", count);
         this.passengers = tempPassenger;
     }
 
