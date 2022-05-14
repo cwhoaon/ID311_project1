@@ -114,9 +114,9 @@ function processGame() {
 
   //generate station
   if(prob((game.clock.time - game.lastStationTime) / STATION_GENERATION_RATE)) {
-    game.stations.push(game.stationFactory.makeStation());
+    let newStation = game.stationFactory.makeStation();
+    if(newStation != null) game.stations.push(newStation);
     game.lastStationTime = game.clock.time;
-    console.log("New Station")
   }
 
   
@@ -128,9 +128,7 @@ function processGame() {
     }
     //draw stations
     station.updateWaitingTime()
-    if(station.checkGameOver()){
-      currentPage = 2;
-    }
+    if(station.checkGameOver()) currentPage = 2;
     station.draw()
   }
 
@@ -183,6 +181,10 @@ sketch.keyTyped = function() {
     setTimeout(() => {
       currentPage = 1
     }, 1000)
+  }
+  if(currentPage == 2 && (key == 'r' || key == 'R')) {
+    initialize()
+    currentPage = 1
   }
 }
 

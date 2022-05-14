@@ -103,20 +103,20 @@ class StationFactory {
     }
 
     makeStation(type = randomType()) {
-        let x, y, offsetX, offsetY, isOverlap, px, py;
-        offsetX = windowWidth/3
-        offsetY = windowWidth/3
+        let x, y, rangeX, rangeY, isOverlap, px, py, pendingCount=0;
+        rangeX = windowWidth*0.8
+        rangeY = windowHeight*0.8
         do {
             isOverlap = false;
-            x = windowWidth/2 + Math.random()*offsetX - offsetX/2;
-            y = windowHeight/2 + Math.random()*offsetY - offsetY/2;
+            x = windowWidth/2 + (Math.random()-0.5) * rangeX
+            y = windowHeight/2 + (Math.random()-0.5) * rangeY
             for({px, py} of this.previousStation) {
                 if (Math.sqrt((x-px)**2 + (y-py)**2) < STATION_SIZE*3) {
                     isOverlap = true;
                     break;
                 }
             }
-            console.log('pending station')
+            if(pendingCount++ > 10) return null;
         } while (isOverlap)
 
         this.previousStation.push({px: x, py: y});
