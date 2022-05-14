@@ -40,6 +40,10 @@ class Station {
         else this.waitingTime = this.waitingTime > 0 ? this.waitingTime-1 : 0;
     }
 
+    checkGameOver() {
+        return this.waitingTime >= MAX_WAITING_TIME;
+    }
+
 
     draw() {
         fill(255, 100, 100)

@@ -1,7 +1,7 @@
 import '../css/style.css';
 import { sketch } from 'p5js-wrapper';
 
-import { PASSENGER_GENERATION_RATE, STATION_GENERATION_RATE, LINE_COLOR, STATION_SIZE } from './Constant';
+import { PASSENGER_GENERATION_RATE, STATION_GENERATION_RATE, LINE_COLOR, STATION_SIZE, LINE_SIZE } from './Constant';
 
 import { prob } from './Static.js';
 
@@ -12,20 +12,21 @@ import { Line, Connection, Terminal, allConnections, allTerminals } from './Line
 import { Train } from './Train';
 import { Button } from './Button';
 
-const game = {
-  clock: new Clock(),
-  score: new Score(),
-  stationFactory: StationFactory.getInstance(),
-  num_line: 8,
-  num_train: 8,
-  stations: [],
-  lines: [],
-  trains: [],
-  lastStationTime: 0,
-  trainButton: null,
-}
 
+let game
 function initialize() {
+  game = {
+    clock: new Clock(),
+    score: new Score(),
+    stationFactory: StationFactory.getInstance(),
+    num_line: 8,
+    num_train: 8,
+    stations: [],
+    lines: [],
+    trains: [],
+    lastStationTime: 0,
+    trainButton: null,
+  }
   for(let i=0; i<game.num_line; i++){
     game.lines.push(new Line(i));
   }
@@ -35,19 +36,71 @@ function initialize() {
   game.trainButton = new Button(windowWidth * 0.04, windowHeight * 0.4, "src/train.png", game.num_train)
 }
 
+let ubuntu
+sketch.preload = function() {
+  ubuntu = loadFont("src/Ubuntu-Bold.ttf");
+}
+
+
 sketch.setup = function(){
   createCanvas(windowWidth, windowHeight);
   rectMode(CENTER);
   ellipseMode(CENTER);
   imageMode(CENTER);
   angleMode(DEGREES);
+  textFont(ubuntu)
   //initializing game
   initialize();
 }
 
 
-
+//0 = before game, 1 = during game, 2 = after game
+let currentPage = 0;
+let loadingHeight = 0
+let loadingHeightSpeed = 0
 sketch.draw = function(){
+  if(currentPage == 0) intro()
+  if(currentPage == 0.5){
+    noStroke()
+    fill(240, 255, 240)
+    rect(windowWidth/2, windowHeight/3, windowWidth, loadingHeight += loadingHeightSpeed**3)
+    loadingHeightSpeed += 0.1
+  }
+
+  if(currentPage == 1) processGame()
+
+  if(currentPage == 2) endPopup()
+}
+
+function intro() {
+  clear()
+  background(50, 150, 50)
+
+
+  textAlign(LEFT, CENTER)
+  textSize(windowHeight *  0.2)
+  textStyle(BOLD)
+  fill(255)
+  noStroke()
+  text("MINI", windowWidth*0.1, windowHeight/3 + windowHeight*0.3)
+  text("METRO", windowWidth*0.1, windowHeight/2 + windowHeight*0.3)
+
+  textAlign(LEFT, BOTTOM)
+  textSize(windowHeight*0.05)
+  text("Press 'S' to Start", windowWidth*0.11, windowHeight/3 - windowHeight*0.02)
+  stroke(240, 255, 240)
+  strokeWeight(LINE_SIZE*2)
+  line(0, windowHeight/3, windowWidth, windowHeight/3)
+  stroke(0, 70, 70)
+  line(windowWidth*0.85, windowHeight/3, windowWidth*0.85, windowHeight);
+  line(windowWidth*0.85, windowHeight/3, windowWidth*0.85 - windowHeight/3, 0)
+  
+  stroke(0)
+  strokeWeight(STATION_SIZE/5*2)
+  circle(windowWidth*0.85, windowHeight/3, STATION_SIZE*2)
+}
+
+function processGame() {
   clear()
   background(240, 255, 240);
   game.clock.draw()
@@ -73,8 +126,11 @@ sketch.draw = function(){
       station.generatePassengers();
       station.generationTime = game.clock.time
     }
-    //draw station
+    //draw stations
     station.updateWaitingTime()
+    if(station.checkGameOver()){
+      currentPage = 2;
+    }
     station.draw()
   }
 
@@ -87,7 +143,6 @@ sketch.draw = function(){
   }
 
   game.clock.increaseTime()
-  //console.log(clock.time)
 }
 
 
@@ -106,9 +161,30 @@ function drawLineStatus() {
   }
 }
 
+function endPopup() {
+  fill(255)
+  stroke(150)
+  strokeWeight(10)
+  rect(windowWidth/2, windowHeight/2, windowWidth/2, windowHeight/2)
+  fill(0)
+  textAlign(CENTER, CENTER)
+  noStroke()
+  textSize(30)
+  text(`You trasnported ${game.score.score} people!`, windowWidth/2, windowHeight/2-40)
+  text("Press 'R' to restart", windowWidth/2, windowHeight/2+40)
+}
 
 
 
+
+sketch.keyTyped = function() {
+  if(currentPage == 0 && (key == 's' || key == 'S')) {
+    currentPage = 0.5
+    setTimeout(() => {
+      currentPage = 1
+    }, 1000)
+  }
+}
 
 
 //none = 0, connection = 1, terminal = 2, train = 3
