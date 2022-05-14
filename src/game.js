@@ -7,11 +7,28 @@ import { prob } from './Static.js';
 
 import { StationFactory } from './Station.js'
 import { Clock } from './Clock.js';
-import { Score } from './Score';
+import { Score } from './Score.js';
 import { Line, Connection, Terminal, allConnections, allTerminals } from './Line';
 import { Train } from './Train';
 import { Button } from './Button';
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDzBwbRbE__LNX_PXdYT5wNF6wH3nU_20I",
+  authDomain: "id311-project1-1dae3.firebaseapp.com",
+  projectId: "id311-project1-1dae3",
+  storageBucket: "id311-project1-1dae3.appspot.com",
+  messagingSenderId: "145352820612",
+  appId: "1:145352820612:web:86d9d73366550581773fd1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 let game
 function initialize() {
@@ -33,7 +50,7 @@ function initialize() {
   game.stations.push(game.stationFactory.makeStation(0));
   game.stations.push(game.stationFactory.makeStation(1));
   game.stations.push(game.stationFactory.makeStation(2));
-  game.trainButton = new Button(windowWidth * 0.04, windowHeight * 0.4, "src/train.png", game.num_train)
+  game.trainButton = new Button(windowWidth * 0.04, windowHeight * 0.4, "/src/train.png", game.num_train)
 }
 
 let ubuntu

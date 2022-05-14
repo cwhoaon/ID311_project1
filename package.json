@@ -7,9 +7,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "firebase-tools": "^10.9.2",
     "vite": "^2.7.2"
   },
   "dependencies": {
+    "firebase": "^9.8.1",
     "p5js-wrapper": "^1.2.3"
   }
 }
