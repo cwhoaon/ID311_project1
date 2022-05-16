@@ -150,10 +150,16 @@ class Connection {
         this.line = line;
         this.station1 = s1;
         this.station2 = s2;
+        this.port1x;
+        this.port1y;
+        this.port2x;
+        this.port2y;
         this.mode = 0; //0 = up, 1 = down
         this.overlap = 0;
         this.midx;
         this.midy;
+        this.setOverlap()
+        this.setPort()
         this.setMid()
     }
 
@@ -167,10 +173,55 @@ class Connection {
                 count++;
         }
         this.overlap = count;
+        this.setPort()
+        this.setMid()
+    }
+
+    setPort() {
+        this.port1x = this.station1.x;
+        this.port1y = this.station1.y;
+        this.port2x = this.station2.x;
+        this.port2y = this.station2.y;
+        let offset = LINE_SIZE
+
+        if(
+            (this.station1.x > this.station2.x && this.station1.y > this.station2.y) ||
+            (this.station1.x < this.station2.x && this.station1.y < this.station2.y)
+        ) {
+            if(this.overlap == 1) {
+                this.port1x += offset;
+                this.port2x += offset
+                this.port1y -= offset
+                this.port2y -= offset
+            } 
+            else if(this.overlap == 2) {
+                this.port1x -= offset
+                this.port2x -= offset
+                this.port1y += offset
+                this.port2y += offset
+            }
+        }
+        else if(
+            (this.station1.x < this.station2.x && this.station1.y > this.station2.y) ||
+            (this.station1.x > this.station2.x && this.station1.y < this.station2.y)
+        ) {
+            if(this.overlap == 1){
+                this.port1x -= offset;
+                this.port2x -= offset;
+                this.port1y -= offset;
+                this.port2y -= offset;
+            }
+            else if(this.overlap == 2) {
+                this.port1x += offset;
+                this.port2x += offset;
+                this.port1y += offset;
+                this.port2y += offset;
+            }
+        }
     }
 
     setMid() {
-        let x1 = this.station1.x, y1 = this.station1.y, x2 = this.station2.x, y2 = this.station2.y;
+        let x1 = this.port1x, y1 = this.port1y, x2 = this.port2x, y2 = this.port2y
         let dx = Math.abs(x1 - x2), dy = Math.abs(y1 - y2);
         if(x1 > x2) [x1, y1, x2, y2] = [x2, y2, x1, y1];
 
@@ -241,35 +292,14 @@ class Connection {
     }
 
     draw() {
-        let x1 = this.station1.x, y1 = this.station1.y, x2 = this.station2.x, y2 = this.station2.y, midx = this.midx, midy = this.midy;
-        if(this.overlap == 1){
-            y1 -= LINE_SIZE
-            midy -= LINE_SIZE
-            y2 -= LINE_SIZE
-        }
-        if(this.overlap == 2) {
-            y1 += LINE_SIZE
-            midy += LINE_SIZE
-            y2 += LINE_SIZE
-        }
+        let x1 = this.port1x, y1 = this.port1y, x2 = this.port2x, y2 = this.port2y, midx = this.midx, midy = this.midy;
         line(x1, y1, midx, midy);
         line(midx, midy, x2, y2);
     }
 
     onMouse() {
-        let dist1, dist2;
-        if(this.overlap == 0){
-            dist1 = this.computeDist(this.station1.x, this.station1.y, this.midx, this.midy);
-            dist2 = this.computeDist(this.station2.x, this.station2.y, this.midx, this.midy);
-        }
-        if(this.overlap == 1) {
-            dist1 = this.computeDist(this.station1.x, this.station1.y-LINE_SIZE, this.midx, this.midy-LINE_SIZE);
-            dist2 = this.computeDist(this.station2.x, this.station2.y-LINE_SIZE, this.midx, this.midy-LINE_SIZE);
-        }
-        if(this.overlap == 2) {
-            dist1 = this.computeDist(this.station1.x, this.station1.y+LINE_SIZE, this.midx, this.midy+LINE_SIZE);
-            dist2 = this.computeDist(this.station2.x, this.station2.y+LINE_SIZE, this.midx, this.midy+LINE_SIZE);
-        }
+        let dist1 = this.computeDist(this.port1x, this.port1y, this.midx, this.midy);
+        let dist2 = this.computeDist(this.port2x, this.port2y, this.midx, this.midy);
 
         if((dist1 != null && dist1 < LINE_SIZE) || (dist2 != null && dist2 < LINE_SIZE)) return this;
         return null;

@@ -37,7 +37,7 @@ function initialize() {
     score: new Score(),
     stationFactory: StationFactory.getInstance(),
     num_line: 8,
-    num_train: 8,
+    num_train: 10,
     stations: [],
     lines: [],
     trains: [],
@@ -215,9 +215,16 @@ function onLine() {
   let search;
   for(const line of game.lines) {
     search = line.onMouse();
-    if(search != null) return search;
+    if(search != null && !connectionOnTrain(search)) return search;
   }
   return null;
+}
+
+function connectionOnTrain(connection) {
+  for(const train of game.trains) {
+    if(train.connection == connection) return true;
+  }
+  return false;
 }
 
 function searchOnStation() {
@@ -368,8 +375,16 @@ sketch.mouseDragged = function() {
       if(interactClass == 1){
         //deleteStation
         if(
-          (interact.station1 == onStation && validOverlap(interact.station2, line.stations[line.stations.indexOf(onStation)-1])) ||
-          (interact.station2 == onStation && validOverlap(interact.station1, line.stations[line.stations.indexOf(onStation)+1]))
+          (
+            interact.station1 == onStation &&
+            !connectionOnTrain(line.connections[line.connections.indexOf(interact)-1]) &&
+            validOverlap(interact.station2, line.stations[line.stations.indexOf(onStation)-1])
+          ) ||
+          (
+            interact.station2 == onStation &&
+            !connectionOnTrain(line.connections[line.connections.indexOf(interact)+1]) &&
+            validOverlap(interact.station1, line.stations[line.stations.indexOf(onStation)+1])
+          )
         ) {
           interact = deleteStation(line, onStation);
         }

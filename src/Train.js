@@ -43,11 +43,11 @@ class Train extends Subject {
         this.line = this.connection.line;
         this.location = 0;
         this.isForward = true;
-        this.x = this.connection.station1.x;
-        this.y = this.connection.station1.y;
+        this.x = this.connection.port1x;
+        this.y = this.connection.port1y;
         this.direction;
         this.partingTime = time;
-        this.arrivalTime = this.getDistance(this.connection.station1.x, this.connection.station1.y, this.connection.midx, this.connection.midy) / TRAIN_SPEED;
+        this.arrivalTime = this.getDistance(this.connection.port1x, this.connection.port1y, this.connection.midx, this.connection.midy) / TRAIN_SPEED;
         this.setDirection();
         this.getIn()
     }
@@ -64,7 +64,7 @@ class Train extends Subject {
         this.setDirection()
         this.x = this.connection.midx;
         this.y = this.connection.midy;
-        let dist = this.isForward ? this.getDistance(this.connection.midx, this.connection.midy, this.connection.station2.x, this.connection.station2.y) : this.getDistance(this.connection.midx, this.connection.midy, this.connection.station1.x, this.connection.station1.y)
+        let dist = this.isForward ? this.getDistance(this.connection.midx, this.connection.midy, this.connection.port2x, this.connection.port2y) : this.getDistance(this.connection.midx, this.connection.midy, this.connection.port1x, this.connection.port1y)
         this.arrivalTime = dist / TRAIN_SPEED;
     }
 
@@ -75,15 +75,15 @@ class Train extends Subject {
         this.location = 0;
         this.setDirection();
         if(this.isForward) {
-            this.x = this.connection.station1.x;
-            this.y = this.connection.station1.y;
+            this.x = this.connection.port1x;
+            this.y = this.connection.port1y;
         }
         else {
-            this.x = this.connection.station2.x;
-            this.y = this.connection.station2.y;
+            this.x = this.connection.port2x;
+            this.y = this.connection.port2y;
         }
 
-        let dist = this.isForward ? this.getDistance(this.connection.midx, this.connection.midy, this.connection.station1.x, this.connection.station1.y) : this.getDistance(this.connection.midx, this.connection.midy, this.connection.station2.x, this.connection.station2.y)
+        let dist = this.isForward ? this.getDistance(this.connection.midx, this.connection.midy, this.connection.port1x, this.connection.port1y) : this.getDistance(this.connection.midx, this.connection.midy, this.connection.port2x, this.connection.port2y)
         this.arrivalTime = dist / TRAIN_SPEED;
     }
 
@@ -152,28 +152,28 @@ class Train extends Subject {
     setDirection() {
         let x1, y1, x2, y2;
         if(this.location == 0 && this.isForward) {
-            x1 = this.connection.station1.x;
-            y1 = this.connection.station1.y;
+            x1 = this.connection.port1x;
+            y1 = this.connection.port1y;
             x2 = this.connection.midx;
             y2 = this.connection.midy;
         }
         else if(this.location == 1 && this.isForward) {
             x1 = this.connection.midx;
             y1 = this.connection.midy;
-            x2 = this.connection.station2.x;
-            y2 = this.connection.station2.y;
+            x2 = this.connection.port2x;
+            y2 = this.connection.port2y;
         }
         else if(this.location == 0 && !this.isForward) {
-            x1 = this.connection.station2.x;
-            y1 = this.connection.station2.y;
+            x1 = this.connection.port2x;
+            y1 = this.connection.port2y;
             x2 = this.connection.midx;
             y2 = this.connection.midy;
         }
         else if(this.location == 1 && !this.isForward) {
             x1 = this.connection.midx;
             y1 = this.connection.midy;
-            x2 = this.connection.station1.x;
-            y2 = this.connection.station1.y;
+            x2 = this.connection.port1x;
+            y2 = this.connection.port1y;
         }
 
         let dir;
