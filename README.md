@@ -15,6 +15,7 @@ The station and passengers have their own types, and the types are one of circle
 Passengers want to go to the station that matches  their type.   
 Player should build appropriate metro lines and place trains to trasport passengers as mush as possible.
 - **Interface**   
+  ![interface](readme/game_interface.png)
   * On the left side, there are gray circles with train icon. The number of circle means the number of new trains that user can use.
   * On the right side, there are several colored circles. The number of circle means the number of metro lines that user can use. Each of the circle represents the metro line. If the circle is large, it indicates that the metro line is currently being used. 
   * On ther upper right, there is a clock that showing the current time.
@@ -36,9 +37,9 @@ A score is the number of passengers that player trasported until the game over.
 
 ## Code Organization
 - **game.js**   
-  + This is main file of my game. I draw the game and treat all events in this file.
+  + This is main file of the game. I draw the game and treat all events in this file.
   + Variable named 'currentPage' determines whether the game is started or before started or ended. Value of currentPage is controlled by 'keyTyped' event.
-  + Object named 'game' contains all information of current game.    
+  + Object named 'game' contains all information of the current game.    
     ```javaScript
     game = {
       clock: new Clock(),
@@ -53,9 +54,9 @@ A score is the number of passengers that player trasported until the game over.
       trainButton: null,
     }
     ```
-  + Function named 'processGame' is the main function the game. In this function, I do things like below.
+  + Function named 'processGame' is the main function of the game. In this function, I do things like below.
     * Draw all objects.
-    * Create new stations and new passengers for each stations. These all created based on probability. Generating probability is proportional to (current time - last generation time).
+    * Create new stations and new passengers for each stations. These are created based on probability. Generating probability is proportional to (current time - last generation time).
     * Move trains.
     * Check game over.
     * Increase time.
