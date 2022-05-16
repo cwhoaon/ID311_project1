@@ -399,7 +399,11 @@ sketch.mouseDragged = function() {
       }
       else {
         //deleteStation
-        if(interact.station == onStation && line.stations.length != 1) {
+        if(
+          interact.station == onStation && line.stations.length != 1 &&
+          (line.stations.indexOf(onStation) == 0 && !connectionOnTrain(line.connections[0])) ||
+          (line.stations.indexOf(onStation) == line.stations.length-1 && !connectionOnTrain(line.connections[line.connections.length-1]))
+        ) {
           interact = deleteTerminal(line, onStation);
         }
         //addStation
