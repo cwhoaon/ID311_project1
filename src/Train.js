@@ -1,6 +1,5 @@
 import { TRAIN_SIZE, TRAIN_SPEED, LINE_COLOR, TRAIN_PASSENGER_SIZE, PASSENGER_MOVING_TIME } from './Constant.js'
-import { drawShape } from './Static.js';
-import { pent } from './shape.js';
+import { drawShape, pent } from './Static.js';
 import { Subject } from './Subject.js';
 
 const directionTable = [
