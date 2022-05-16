@@ -39,9 +39,9 @@ A score is the number of passengers that player trasported until the game over.
 - **game.js**   
   + This is main file of the game. I draw the game and treat all events in this file.
   + Variable named 'currentPage' determines whether the game is started or before started or ended. Value of currentPage is controlled by 'keyTyped' event.   
-  <img src="readme/before_game.png" width="200">
-  <img src="readme/game_interface.png" width="200">
-  <img src="readme/game_ended.png" width="200">
+  <img src="readme/before_game.png" width="300">
+  <img src="readme/game_interface.png" width="300">
+  <img src="readme/game_ended.png" width="300">
   + Object named 'game' contains all information of the current game.    
     ```javaScript
     game = {
