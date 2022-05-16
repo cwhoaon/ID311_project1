@@ -27,8 +27,12 @@ class Button {
 
 
     draw() {
+        fill(0);
+
         let gap = BUTTON_SIZE / 3;
         let color = 50 + 30 * this.num;
+
+        text(this.num, this.x + gap*2, this.y - gap*2);
 
         for(let i=this.num; i>0; i--){
             if(color > 170) fill(170)

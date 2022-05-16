@@ -215,7 +215,7 @@ function onLine() {
   let search;
   for(const line of game.lines) {
     search = line.onMouse();
-    if(search != null && !connectionOnTrain(search)) return search;
+    if(search != null) return search;
   }
   return null;
 }
@@ -285,6 +285,7 @@ sketch.mousePressed = function(){
   }
   if(interact == null){
     interact = onLine();
+    if(connectionOnTrain(interact)) interact = null;
   }
 
   interactClass = getClass(interact);
